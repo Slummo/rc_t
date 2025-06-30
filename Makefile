@@ -53,8 +53,17 @@ drun: DEBUG := 1
 drun: all
 	@gdb ./$(BIN)/$(TARGET)
 
+# Run with Valgrind
+valgrind: DEBUG := 1
+valgrind: all
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(BIN)/$(TARGET); \
+
+valgrind_summary: DEBUG := 1
+valgrind_summary: all
+	valgrind --leak-check=full ./$(BIN)/$(TARGET); \
+
 # Clean
 clean:
 	rm -rf $(OBJ) $(BIN)/$(TARGET)
 
-.PHONY: all run debug drun clean
+.PHONY: all run debug drun valgrind valgrind_summary clean

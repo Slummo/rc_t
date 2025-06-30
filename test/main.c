@@ -4,31 +4,28 @@
 
 #define NUM 10
 
-void int_arr_drop(void* arr_raw) {
-    free(arr_raw);
-}
-
 int main(void) {
     int* arr_raw = (int*)malloc(sizeof(int) * NUM);
     for (int i = 0; i < NUM; i++) {
         arr_raw[i] = i * 2;
     }
 
-    rc_t arr = rc_new((void*)arr_raw, int_arr_drop);
-    rc_t arr2 = rc_clone(arr);
+    rc_t* arr = rc_new((void*)arr_raw, free);
+    rc_t* arr_clone = rc_clone(arr);
 
     for (int i = 0; i < NUM; i++) {
-        printf("arr[i] = %d, arr2[i] = %d\n", ((const int*)rc_data(arr))[i], ((const int*)rc_data(arr2))[i]);
+        printf("arr[i] = %d, arr_clone[i] = %d\n", ((const int*)rc_data(arr))[i], ((const int*)rc_data(arr_clone))[i]);
     }
+    printf("\n");
 
     rc_free(&arr);
 
-    printf("After free(arr):\n");
+    printf("\nAfter free of original:\n");
     for (int i = 0; i < NUM; i++) {
-        printf("arr2[i] = %d\n", ((const int*)rc_data(arr2))[i]);
+        printf("arr_clone[i] = %d\n", ((const int*)rc_data(arr_clone))[i]);
     }
 
-    rc_free(&arr2);
+    rc_free(&arr_clone);
 
     return 0;
 }
